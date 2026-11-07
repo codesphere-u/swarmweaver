@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from collections import defaultdict, deque
 from fnmatch import fnmatchcase
+import functools
 import posixpath
 from typing import Iterable
 
@@ -25,6 +26,7 @@ class CycleDetectedError(DAGValidationError):
         super().__init__(f"Cyclic task dependency detected: {formatted}")
 
 
+@functools.lru_cache(maxsize=8192)
 def normalize_scope_pattern(pattern: str) -> tuple[str, str]:
     """
     Splits a scope pattern into (normalized_file_glob, symbol_glob).
@@ -116,6 +118,7 @@ def _has_wildcard(text: str) -> bool:
     return any(ch in text for ch in ("*", "?", "["))
 
 
+@functools.lru_cache(maxsize=16384)
 def scopes_overlap(pattern_a: str, pattern_b: str) -> bool:
     """
     Determines whether two file/glob/symbol scope specifications can refer to

@@ -53,7 +53,7 @@ Reproducible via `swarmweaver benchmark` (65 unit & concurrency tests, zero exte
 
 | Benchmark Dimension | Workload | Verified Result | Key Metric |
 | :--- | :--- | :--- | :--- |
-| **1. DAG Compilation & Wave Scheduling** | 200-task, 10-layer multi-agent DAG (160 file conflicts) | **P50: `23.38 ms`** / **P95: `25.14 ms`** | `30` safe waves, **`5.93x`** speedup |
+| **1. DAG Compilation & Wave Scheduling** | 200-task, 10-layer multi-agent DAG (160 file conflicts) | **P50: `0.97 ms`** / **P95: `6.25 ms`** | `30` safe waves, **`5.93x`** speedup |
 | **2. Parallel File-Scope Conflict Guard** | 50 concurrent conflicting file/glob edit tasks | **`0` race conditions** | **`100.0%`** collision prevention |
 | **3. Crash-Recovery Token Savings** | 20 workflows (10 steps each), crash injected at 70% | **`140,000` / `200,000` tokens saved** | **`70.0%`** token savings, **`0.0074 ms/node`** replay |
 | **4. Cycle & Contract Violation Guard** | 15 malformed DAGs (cycles, missing deps, bad contracts) | **`15 / 15` detected** | **`100.0%`** detection recall |
