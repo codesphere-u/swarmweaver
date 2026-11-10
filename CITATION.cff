@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you cite or use this software in research, systems, or publications, please cite it as below."
+authors:
+  - family-names: "Akandwanaho"
+    given-names: "Ivan"
+    email: "codesphereinnovationz@gmail.com"
+    affiliation: "Codesphere Innovations (U) Limited"
+title: "SwarmWeaver"
+abstract: "Deterministic Orchestration Framework for Hierarchical Multi-Agent DAGs"
+version: "1.0.0"
+date-released: 2026-11-10
+url: "https://github.com/codesphere-u/swarmweaver"
+repository-code: "https://github.com/codesphere-u/swarmweaver"
+license: "MIT"
