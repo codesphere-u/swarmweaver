@@ -20,7 +20,9 @@ wheels/
 *.egg
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
+.mypy_cache/
 .ruff_cache/
 .venv/
 venv/

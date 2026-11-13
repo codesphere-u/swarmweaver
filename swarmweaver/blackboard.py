@@ -4,9 +4,9 @@ TypedBlackboard — Shared multi-agent state store with schema contract enforcem
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import threading
 import time
+from collections.abc import Callable
 from typing import Any
 
 from swarmweaver.checkpoint import compute_canonical_digest

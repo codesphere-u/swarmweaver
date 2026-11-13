@@ -4,11 +4,11 @@ DAGCompiler & Topological Wave Planner with File-Glob Conflict Splitting.
 
 from __future__ import annotations
 
-from collections import defaultdict, deque
-from fnmatch import fnmatchcase
 import functools
 import posixpath
-from typing import Iterable
+from collections import defaultdict, deque
+from collections.abc import Iterable
+from fnmatch import fnmatchcase
 
 from swarmweaver.models import FileConflictEdge, TaskSpec, WavePlan
 
@@ -146,12 +146,10 @@ def scopes_overlap(pattern_a: str, pattern_b: str) -> bool:
 
     # Directory prefix containment check for non-wildcard directory paths
     # e.g., "src/auth" vs "src/auth/jwt.py"
-    if not _has_wildcard(file_a) and "." not in posixpath.basename(file_a):
-        if file_b.startswith(file_a + "/"):
-            return True
-    if not _has_wildcard(file_b) and "." not in posixpath.basename(file_b):
-        if file_a.startswith(file_b + "/"):
-            return True
+    if not _has_wildcard(file_a) and "." not in posixpath.basename(file_a) and file_b.startswith(file_a + "/"):
+        return True
+    if not _has_wildcard(file_b) and "." not in posixpath.basename(file_b) and file_a.startswith(file_b + "/"):
+        return True
 
     segs_a = file_a.split("/")
     segs_b = file_b.split("/")
@@ -259,8 +257,8 @@ class DAGCompiler:
         for task_id, task in self._tasks_by_id.items():
             for dep_id in task.depends_on:
                 adj[dep_id].append(task_id)
-        for node_id in adj:
-            adj[node_id].sort()
+        for dep_list in adj.values():
+            dep_list.sort()
 
         color: dict[str, int] = {tid: 0 for tid in self._tasks_by_id}  # 0=unvisited, 1=visiting, 2=done
         parent: dict[str, str] = {}
@@ -361,8 +359,8 @@ class DAGCompiler:
         for tid, task in self._tasks_by_id.items():
             for dep in task.depends_on:
                 dependents[dep].append(tid)
-        for dep in dependents:
-            dependents[dep].sort()
+        for dep_list in dependents.values():
+            dep_list.sort()
 
         topo_level: dict[str, int] = {}
         queue: deque[str] = deque(sorted(tid for tid, deg in in_degree.items() if deg == 0))

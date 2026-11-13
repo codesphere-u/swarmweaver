@@ -4,10 +4,10 @@ SwarmOrchestrator — Deterministic Multi-Agent DAG Execution & Crash-Safe Resum
 
 from __future__ import annotations
 
+import time
 from collections.abc import Callable, Iterable
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-import time
 from typing import Any
 
 from swarmweaver.blackboard import BlackboardContractError, TypedBlackboard, parse_contract_spec
@@ -277,7 +277,7 @@ class SwarmOrchestrator:
                             completed_tasks.append(tid)
                             tokens_saved_by_replay += cached.tokens_used
                             continue
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001 - workflow task failure boundary
                         failed_task = tid
                         error_message = str(exc)
                         task_statuses[tid] = TaskStatus.FAILED.value
@@ -314,7 +314,7 @@ class SwarmOrchestrator:
                         task_statuses[tid] = TaskStatus.COMPLETED.value
                         completed_tasks.append(tid)
                         newly_executed_count += 1
-                    except Exception as exc:
+                    except Exception as exc:  # noqa: BLE001 - user executor failure boundary
                         retries_used[tid] = tasks_by_id[tid].retry_budget
                         failed_task = tid
                         error_message = str(exc)
@@ -336,7 +336,7 @@ class SwarmOrchestrator:
                             task_statuses[tid] = TaskStatus.COMPLETED.value
                             completed_tasks.append(tid)
                             newly_executed_count += 1
-                        except Exception as exc:
+                        except Exception as exc:  # noqa: BLE001 - worker future failure boundary
                             retries_used[tid] = tasks_by_id[tid].retry_budget
                             if failed_task is None:
                                 failed_task = tid

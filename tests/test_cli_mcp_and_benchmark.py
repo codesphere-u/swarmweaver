@@ -7,6 +7,7 @@ from __future__ import annotations
 import io
 import json
 from pathlib import Path
+
 import pytest
 
 from swarmweaver.benchmark import run_benchmark_suite

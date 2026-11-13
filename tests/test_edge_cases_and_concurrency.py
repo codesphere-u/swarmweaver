@@ -4,9 +4,10 @@ Additional edge-case, concurrency, tamper-detection, and protocol tests for Swar
 
 from __future__ import annotations
 
-from concurrent.futures import ThreadPoolExecutor
 import json
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+
 import pytest
 
 from swarmweaver.blackboard import BlackboardContractError, TypedBlackboard, parse_contract_spec

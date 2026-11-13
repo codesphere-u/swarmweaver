@@ -8,7 +8,7 @@ import hashlib
 import secrets
 import threading
 import time
-from typing import Iterable
+from collections.abc import Iterable
 
 from swarmweaver.dag import normalize_scope_pattern, scopes_overlap
 from swarmweaver.models import LeaseConflict, LeaseGrant, LeaseMode

@@ -4,12 +4,12 @@ CheckpointJournal & Crash-Safe Resume Engine with SHA-256 Hash Chaining.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import hashlib
 import json
-from pathlib import Path
 import threading
 import time
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from swarmweaver.models import CheckpointRecord

@@ -165,6 +165,31 @@ print(f"Tokens Spent: {report.tokens_spent} | Tokens Saved: {report.tokens_saved
 
 ---
 
+## HTTP/SSE MCP Portal, REST API & Docker Deployment
+
+SwarmWeaver also includes an interactive DAG Wave Planner & Lease Workbench, Streamable HTTP + SSE MCP gateway (`/mcp`), REST endpoints, Prometheus/JSON telemetry, Vercel ASGI wrapper ([`api/index.py`](api/index.py)), and hardened non-root container image:
+
+```bash
+# Start the interactive workbench + Streamable HTTP/SSE MCP server on http://127.0.0.1:8000
+swarmweaver serve-http --host 127.0.0.1 --port 8000
+
+# Run the live HTTP + MCP smoke test
+python scripts/smoke_test.py
+
+# Build and run the non-root production container
+docker build -t swarmweaver .
+docker run --rm -p 8000:8000 swarmweaver
+```
+
+Exposed HTTP endpoints:
+- `GET /` — Interactive DAG Wave & Lease Workbench UI (`Accept: text/html`) or JSON service manifest
+- `GET` / `HEAD /health`, `/healthz`, `/readyz` — Readiness and liveness probes
+- `GET /metrics` — Prometheus text or JSON telemetry (`?format=json`)
+- `POST /mcp` (Streamable HTTP JSON-RPC 2.0) & `GET /mcp` (SSE or HTTP `405`) — MCP tools, resources, and prompts
+- `POST /api/plan`, `POST /api/conflicts`, `GET|POST /api/demo`, `GET|POST /api/benchmark` — REST DAG scheduling & benchmark endpoints
+
+---
+
 ## Part of the Codesphere Agentic Infrastructure Ecosystem
 
 SwarmWeaver is built by **Akandwanaho Ivan Alvin** ([`@codesphere-u`](https://github.com/codesphere-u)), Founder & Managing Director of **Codesphere Innovations (U) Limited** (Kampala, Uganda), as part of a modular open-source stack for production-grade AI engineering:

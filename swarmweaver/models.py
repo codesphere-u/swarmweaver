@@ -5,18 +5,18 @@ Immutable, validated domain models for SwarmWeaver multi-agent orchestration.
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 
-class LeaseMode(str, Enum):
+class LeaseMode(StrEnum):
     """Lock modes supported by the FileScopeLeaseManager."""
 
     SHARED_READ = "SHARED_READ"
     EXCLUSIVE_WRITE = "EXCLUSIVE_WRITE"
 
 
-class TaskStatus(str, Enum):
+class TaskStatus(StrEnum):
     """Execution lifecycle state of a DAG task node."""
 
     PENDING = "PENDING"
