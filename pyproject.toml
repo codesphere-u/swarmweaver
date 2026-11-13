@@ -31,6 +31,7 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "Topic :: System :: Distributed Computing",
 ]
@@ -62,6 +63,9 @@ include = ["swarmweaver*"]
 
 [tool.setuptools.package-data]
 swarmweaver = ["py.typed"]
+
+[tool.vercel]
+entrypoint = "api.index:app"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

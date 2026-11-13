@@ -23,7 +23,21 @@ def test_health_readyz_info_metrics_and_head() -> None:
     assert health.status == 200
     assert health.headers["X-Request-ID"] == "req-swarm-01"
     assert health.headers["X-Content-Type-Options"] == "nosniff"
+    assert health.headers["X-Frame-Options"] == "SAMEORIGIN"
+    assert health.headers["Referrer-Policy"] == "strict-origin-when-cross-origin"
+    assert "Cache-Control" not in health.headers
     assert _decode(health.body)["checks"]["dag_compiler"] == "ready"
+
+    unsafe_id = app.handle_http("GET", "/health", {"X-Request-ID": "bad\nvalue with spaces"})
+    assert unsafe_id.status == 200
+    assert unsafe_id.headers["X-Request-ID"] != "bad\nvalue with spaces"
+    assert len(unsafe_id.headers["X-Request-ID"]) == 32
+
+    opt = app.handle_http("OPTIONS", "/mcp", {})
+    assert opt.status == 204
+    assert opt.headers["Access-Control-Allow-Origin"] == "*"
+    assert "POST" in opt.headers["Access-Control-Allow-Methods"]
+    assert "Mcp-Session-Id" in opt.headers["Access-Control-Allow-Headers"]
 
     head = app.handle_http("HEAD", "/healthz", {})
     assert head.status == 200
@@ -65,6 +79,7 @@ def test_rest_plan_conflicts_demo_and_benchmark() -> None:
         json.dumps({"tasks": tasks_payload, "validate_contracts": True}).encode("utf-8"),
     )
     assert plan_resp.status == 200
+    assert plan_resp.headers["Cache-Control"] == "no-store"
     plan_data = _decode(plan_resp.body)
     assert plan_data["total_waves"] >= 6
     assert len(plan_data["conflicts_resolved"]) >= 2
@@ -83,12 +98,14 @@ def test_rest_plan_conflicts_demo_and_benchmark() -> None:
         ).encode("utf-8"),
     )
     assert conflicts_resp.status == 200
+    assert conflicts_resp.headers["Cache-Control"] == "no-store"
     conflicts_data = _decode(conflicts_resp.body)
     assert conflicts_data["safe_for_parallel_execution"] is False
     assert conflicts_data["conflict_count"] == 1
 
     demo_resp = app.handle_http("GET", "/api/demo", {})
     assert demo_resp.status == 200
+    assert demo_resp.headers["Cache-Control"] == "no-store"
     demo_data = _decode(demo_resp.body)
     assert demo_data["run_2_checkpoint_resume"]["status"] == "COMPLETED"
     assert demo_data["journal_integrity"]["valid"] is True
@@ -102,11 +119,24 @@ def test_rest_plan_conflicts_demo_and_benchmark() -> None:
 def test_mcp_streamable_http_resources_and_prompts() -> None:
     app = SwarmWeaverHTTPApp()
 
-    assert app.handle_http("GET", "/mcp", {}).status == 405
+    mcp_405 = app.handle_http("GET", "/mcp", {})
+    assert mcp_405.status == 405
+    assert mcp_405.headers["Allow"] == "POST, OPTIONS"
+    assert mcp_405.headers["Cache-Control"] == "no-store"
+
     sse_resp = app.handle_http("GET", "/mcp", {"Accept": "text/event-stream"})
     assert sse_resp.status == 200
     assert "Mcp-Session-Id" in sse_resp.headers
     assert "event: ready" in sse_resp.body.decode("utf-8")
+
+    malformed_mcp = app.handle_http(
+        "POST",
+        "/mcp",
+        {"Content-Type": "application/json"},
+        b"{not-valid-json",
+    )
+    assert malformed_mcp.status == 400
+    assert _decode(malformed_mcp.body)["error"]["code"] == -32700
 
     init_resp = app.handle_http(
         "POST",
@@ -115,7 +145,44 @@ def test_mcp_streamable_http_resources_and_prompts() -> None:
         json.dumps({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}}).encode("utf-8"),
     )
     assert init_resp.status == 200
+    assert init_resp.headers["Cache-Control"] == "no-store"
     sid = init_resp.headers["Mcp-Session-Id"]
+    caps = _decode(init_resp.body)["result"]["capabilities"]
+    assert "tools" in caps and "resources" in caps and "prompts" in caps
+
+    tools_list_resp = app.handle_http(
+        "POST",
+        "/mcp",
+        {"Content-Type": "application/json", "Mcp-Session-Id": sid},
+        json.dumps({"jsonrpc": "2.0", "id": 100, "method": "tools/list"}).encode("utf-8"),
+    )
+    assert tools_list_resp.status == 200
+    tool_names = [t["name"] for t in _decode(tools_list_resp.body)["result"]["tools"]]
+    assert "swarmweaver_plan_waves" in tool_names
+
+    tool_call_resp = app.handle_http(
+        "POST",
+        "/mcp",
+        {"Content-Type": "application/json", "Mcp-Session-Id": sid},
+        json.dumps(
+            {
+                "jsonrpc": "2.0",
+                "id": 101,
+                "method": "tools/call",
+                "params": {
+                    "name": "swarmweaver_plan_waves",
+                    "arguments": {
+                        "tasks": [
+                            {"task_id": "a", "title": "Edit A", "write_globs": ["src/shared.py"]},
+                            {"task_id": "b", "title": "Edit B", "write_globs": ["src/shared.py"]},
+                        ]
+                    },
+                },
+            }
+        ).encode("utf-8"),
+    )
+    assert tool_call_resp.status == 200
+    assert _decode(tool_call_resp.body)["result"]["isError"] is False
 
     notif = app.handle_http(
         "POST",
@@ -215,7 +282,8 @@ def test_hardening_guards_and_live_tcp_roundtrip() -> None:
     assert _decode(err.body)["request_id"] == "trace-sw-500"
 
     server = create_http_server(host="127.0.0.1", port=0, max_body_bytes=2048)
-    host, port = server.server_address[:2]
+    raw_host, port = server.server_address[:2]
+    host = raw_host.decode("utf-8") if isinstance(raw_host, (bytes, bytearray)) else str(raw_host)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
     try:
@@ -226,6 +294,50 @@ def test_hardening_guards_and_live_tcp_roundtrip() -> None:
         conn.close()
         assert resp.status == 200
         assert data["status"] == "ok"
+
+        conn_head = http.client.HTTPConnection(host, port, timeout=5)
+        conn_head.request("HEAD", "/health")
+        head_resp = conn_head.getresponse()
+        head_body = head_resp.read()
+        conn_head.close()
+        assert head_resp.status == 200
+        assert head_body == b""
+
+        conn_bad = http.client.HTTPConnection(host, port, timeout=5)
+        conn_bad.request("POST", "/mcp", body=b"{bad", headers={"Content-Type": "application/json"})
+        bad_resp = conn_bad.getresponse()
+        bad_data = _decode(bad_resp.read())
+        conn_bad.close()
+        assert bad_resp.status == 400
+        assert bad_data["error"]["code"] == -32700
+
+        conn_big = http.client.HTTPConnection(host, port, timeout=5)
+        conn_big.request(
+            "POST",
+            "/api/plan",
+            body=b"x" * 4096,
+            headers={"Content-Type": "application/json"},
+        )
+        big_resp = conn_big.getresponse()
+        big_resp.read()
+        conn_big.close()
+        assert big_resp.status == 413
     finally:
         server.shutdown()
         server.server_close()
+
+
+def test_cli_serve_http_wiring(monkeypatch: Any) -> None:
+    from swarmweaver import cli
+
+    captured: dict[str, Any] = {}
+
+    def _fake_serve_http(*, host: str, port: int, max_body_bytes: int) -> None:
+        captured["host"] = host
+        captured["port"] = port
+        captured["max_body_bytes"] = max_body_bytes
+
+    monkeypatch.setattr(cli, "serve_http", _fake_serve_http)
+    rc = cli.main(["serve-http", "--host", "0.0.0.0", "--port", "9123", "--max-body-bytes", "4096"])
+    assert rc == 0
+    assert captured == {"host": "0.0.0.0", "port": 9123, "max_body_bytes": 4096}

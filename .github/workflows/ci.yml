@@ -37,16 +37,17 @@ jobs:
         run: ruff check .
 
       - name: Static type check with mypy
-        run: mypy swarmweaver api
+        run: mypy swarmweaver api scripts
 
       - name: Run pytest suite with coverage gate
-        run: pytest -v --cov=swarmweaver --cov-report=term-missing --cov-fail-under=85
+        run: pytest -v --cov=swarmweaver --cov-report=term-missing --cov-fail-under=90
 
       - name: Run live HTTP & MCP smoke test
         run: python scripts/smoke_test.py
 
-      - name: Run multi-agent crash-resume swarm demo
-        run: swarmweaver demo
-
-      - name: Run reproducible benchmark suite
-        run: swarmweaver benchmark --json > /dev/null
+      - name: Verify CLI commands and subcommands
+        run: |
+          swarmweaver plan --json > /dev/null
+          swarmweaver demo
+          swarmweaver benchmark --json > /dev/null
+          swarmweaver serve-http --help > /dev/null

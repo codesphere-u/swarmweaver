@@ -33,7 +33,8 @@ def _request(
 def run_smoke_test() -> None:
     """Boot SwarmWeaver HTTP server on an ephemeral port and verify core contracts."""
     server = create_http_server(host="127.0.0.1", port=0, max_body_bytes=8192)
-    host, port = server.server_address[:2]
+    raw_host, port = server.server_address[:2]
+    host = raw_host.decode("utf-8") if isinstance(raw_host, (bytes, bytearray)) else str(raw_host)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
 
@@ -42,6 +43,8 @@ def run_smoke_test() -> None:
         assert status == 200, f"/health returned {status}"
         assert json.loads(raw)["status"] == "ok"
         assert headers.get("x-content-type-options") == "nosniff"
+        assert headers.get("x-frame-options") == "SAMEORIGIN"
+        assert headers.get("referrer-policy") == "strict-origin-when-cross-origin"
 
         head_status, _, head_raw = _request(host, port, "HEAD", "/health")
         assert head_status == 200 and head_raw == b""
@@ -53,8 +56,20 @@ def run_smoke_test() -> None:
         assert "SwarmWeaver" in html_raw.decode("utf-8")
         assert "text/html" in html_headers.get("content-type", "")
 
-        mcp_get_status, _, _ = _request(host, port, "GET", "/mcp")
+        mcp_get_status, mcp_get_headers, _ = _request(host, port, "GET", "/mcp")
         assert mcp_get_status == 405
+        assert mcp_get_headers.get("allow") == "POST, OPTIONS"
+
+        bad_mcp_status, _, bad_mcp_raw = _request(
+            host,
+            port,
+            "POST",
+            "/mcp",
+            headers={"Content-Type": "application/json"},
+            body=b"{not-json",
+        )
+        assert bad_mcp_status == 400
+        assert json.loads(bad_mcp_raw)["error"]["code"] == -32700
 
         init_body = json.dumps(
             {
@@ -76,8 +91,9 @@ def run_smoke_test() -> None:
         assert "mcp-session-id" in init_headers
         assert json.loads(init_raw)["result"]["serverInfo"]["name"] == "swarmweaver-mcp"
 
-        demo_status, _, demo_raw = _request(host, port, "GET", "/api/demo")
+        demo_status, demo_headers, demo_raw = _request(host, port, "GET", "/api/demo")
         assert demo_status == 200
+        assert demo_headers.get("cache-control") == "no-store"
         demo_data = json.loads(demo_raw)
         assert demo_data["run_2_checkpoint_resume"]["status"] == "COMPLETED"
         assert demo_data["journal_integrity"]["valid"] is True

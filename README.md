@@ -49,7 +49,7 @@ flowchart TD
 
 ## Verified Benchmark Results (`v1.0.0`)
 
-Reproducible via `swarmweaver benchmark` (65 unit & concurrency tests, zero external runtime dependencies):
+Reproducible via `swarmweaver benchmark` (zero external runtime dependencies):
 
 | Benchmark Dimension | Workload | Verified Result | Key Metric |
 | :--- | :--- | :--- | :--- |
@@ -183,10 +183,20 @@ docker run --rm -p 8000:8000 swarmweaver
 
 Exposed HTTP endpoints:
 - `GET /` — Interactive DAG Wave & Lease Workbench UI (`Accept: text/html`) or JSON service manifest
-- `GET` / `HEAD /health`, `/healthz`, `/readyz` — Readiness and liveness probes
+- `GET` / `HEAD /health`, `/healthz`, `/readyz`, `/info` — Readiness, liveness, and service metadata probes
 - `GET /metrics` — Prometheus text or JSON telemetry (`?format=json`)
-- `POST /mcp` (Streamable HTTP JSON-RPC 2.0) & `GET /mcp` (SSE or HTTP `405`) — MCP tools, resources, and prompts
+- `POST /mcp` (Streamable HTTP JSON-RPC 2.0), `GET /mcp` (SSE or HTTP `405` `Allow: POST, OPTIONS`), `POST /messages` — MCP tools, `resources/list` + `resources/read`, and `prompts/list` + `prompts/get`
 - `POST /api/plan`, `POST /api/conflicts`, `GET|POST /api/demo`, `GET|POST /api/benchmark` — REST DAG scheduling & benchmark endpoints
+- `api/index.py` + `pyproject.toml` (`[tool.vercel] entrypoint = "api.index:app"`) — Optional FastAPI ASGI wrapper (`pip install -e ".[server]"`)
+
+### Quality & Verification
+
+```bash
+ruff check .
+mypy swarmweaver api scripts
+pytest -v --cov=swarmweaver --cov-report=term-missing --cov-fail-under=90
+python scripts/smoke_test.py
+```
 
 ---
 

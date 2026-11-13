@@ -903,6 +903,19 @@ class SwarmWeaverHTTPHandler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:
         return None
 
+    def send_error(self, code: int, message: str | None = None, explain: str | None = None) -> None:
+        _ = explain
+        resp = self.server.app._json_response(
+            code,
+            {
+                "error": message or HTTPStatus(code).phrase,
+                "code": code,
+            },
+            "/",
+            sanitize_request_id(None),
+        )
+        self._write_response(resp, send_body=(getattr(self, "command", None) != "HEAD"))
+
     def _read_request_body(self) -> tuple[bytes, HTTPResponse | None]:
         header_map = {k: v for k, v in self.headers.items()}
         req_id = sanitize_request_id(_get_header(header_map, "x-request-id"))
@@ -937,6 +950,7 @@ class SwarmWeaverHTTPHandler(BaseHTTPRequestHandler):
         header_map = {k: v for k, v in self.headers.items()}
         body, early_error = self._read_request_body()
         if early_error is not None:
+            self.server.app.metrics.record_http(method.upper(), early_error.status, 0.0)
             self._write_response(early_error, send_body=(method != "HEAD"))
             return
         resp = self.server.app.handle_http(method, self.path, header_map, body)
@@ -998,8 +1012,8 @@ def serve_http(
     bound_host, bound_port = server.server_address[:2]
     host_display = (
         bound_host.decode("utf-8", errors="replace")
-        if isinstance(bound_host, bytes)
-        else bound_host
+        if isinstance(bound_host, (bytes, bytearray))
+        else str(bound_host)
     )
     print(
         f"SwarmWeaver HTTP/MCP portal listening on http://{host_display}:{bound_port} "
