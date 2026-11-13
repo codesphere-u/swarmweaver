@@ -237,7 +237,7 @@ class SwarmOrchestrator:
                         last_exc = exc
                         attempt += 1
                         if attempt >= max_attempts:
-                            raise last_exc
+                            raise
                 assert last_exc is not None
                 raise last_exc
             finally:
