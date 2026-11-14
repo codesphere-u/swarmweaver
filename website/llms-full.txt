@@ -1,0 +1,37 @@
+# SwarmWeaver v1.1.0 — Full Reference for AI Agents & Crawlers
+
+Repository: https://github.com/codesphere-u/swarmweaver
+Website: https://codesphere-u.github.io/swarmweaver/
+Author: Akandwanaho Ivan Alvin (CodeSphere Innovations (U) Limited)
+License: MIT
+
+## Overview
+SwarmWeaver orchestrates parallel multi-agent software engineering tasks in pure Python 3.11+ without Redis, Postgres, or third-party dependencies. Every workflow passes through five deterministic guarantees:
+
+1. `DAGCompiler`:
+   - Assigns topological levels via Kahn's algorithm.
+   - Detects circular dependencies via iterative DFS (`CycleDetectedError`).
+   - Builds intra-level conflict graphs across normalized `read_globs`, `write_globs`, directory wildcards (`**`), and `path.py::symbol` slices.
+   - Greedily colors conflicting tasks by descending downstream critical path into non-overlapping sub-waves (`WRITE_WRITE`, `READ_WRITE`).
+2. `FileScopeLeaseManager`:
+   - Grants `SHARED_READ` or `EXCLUSIVE_WRITE` runtime leases in sorted canonical scope order.
+   - Expires stale leases using monotonic nanosecond TTLs (`default_ttl_ms`).
+   - Records every intercepted collision (`LeaseConflict`).
+3. `CheckpointJournal`:
+   - Appends content-addressable JSONL records chained with `prev_hash -> entry_hash` SHA-256 canonical digests.
+   - Replays completed nodes in `0.00752 ms/node` average during benchmark recovery with zero additional token expenditure.
+   - Verifies integrity cleanly via `swarmweaver verify-journal <path>`.
+4. `TypedBlackboard`:
+   - Enforces inline type strings (`str`, `int`, `float`, `bool`, `dict`, `list`) and callable validators prior to task launch and upon task completion.
+5. `SwarmWeaverMCPServer` & `http_server`:
+   - Stdio JSON-RPC 2.0 (`swarmweaver mcp`) and Streamable HTTP/SSE (`swarmweaver serve-http`) MCP server (`2024-11-05`).
+   - Tools: `swarmweaver_plan_waves`, `swarmweaver_check_file_conflicts`, `swarmweaver_inspect_checkpoint`, `swarmweaver_run_benchmark`.
+   - Resources: `swarmweaver://workflow/demo-10-agent`, `swarmweaver://benchmark/summary`, `swarmweaver://dag/lease-conflict-rules`, `swarmweaver://workflow/{task_id}`.
+   - Prompts: `plan-safe-swarm`, `resolve-file-lease-conflict`, `recover-crashed-workflow`.
+
+## Verified v1.1.0 Benchmark Numbers
+- `200-Task DAG Compilation & Wave Scheduling`: P50=0.999 ms, P95=6.801 ms, 30 waves, 160 conflicts split.
+- `50 Parallel Conflicting File-Edit Tasks`: 0 race conditions, 100.0% collision prevention.
+- `20 Crash-Recovery Workflows (70% Crash)`: 70.0% tokens saved (140,000 tokens), 0.00752 ms/node replay.
+- `Cycle & Contract Violation Detection (15)`: 15/15 detected (100.0% recall).
+- `10-Agent Full-Stack Refactoring Demo`: 7 conflict-free waves (2 collisions split), Run #1 crash at `08_integration_tests` (`8/10` nodes, `8,600` tokens), Run #2 replayed 8 nodes in `0.077 ms` saving `8,600` tokens.

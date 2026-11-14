@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SwarmWeaver — Deterministic Multi-Agent DAG Orchestrator &amp; Lease Guard</title>
+  <meta name="description" content="Compile parallel multi-agent DAG waves without file collisions, typed blackboard drift, or lost crash checkpoints in 0.999 ms.">
+  <meta name="keywords" content="SwarmWeaver, multi-agent DAG orchestrator, file-scope lease lock, SHA-256 checkpoint resume, typed blackboard, MCP server, Python">
+  <link rel="canonical" href="https://codesphere-u.github.io/swarmweaver/">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#fbbf24">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SwarmWeaver — Conflict-Free Multi-Agent DAG Orchestrator">
+  <meta property="og:description" content="Compile 200-task DAG waves in 0.999 ms P50, block 100% of file-edit race conditions, and replay crashed agents for 0 extra tokens.">
+  <meta property="og:url" content="https://codesphere-u.github.io/swarmweaver/">
+  <meta property="og:image" content="https://codesphere-u.github.io/swarmweaver/og-image.svg">
+  <meta property="og:image:alt" content="SwarmWeaver v1.1.0 Golden Amber hexagonal loom mascot and benchmark metrics">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SwarmWeaver — Deterministic Multi-Agent DAG &amp; Checkpoint Engine">
+  <meta name="twitter:description" content="Zero-dependency Python 3.11+ DAG wave compiler, file-scope lease guard, SHA-256 checkpoint journal, and MCP server.">
+  <meta name="twitter:image" content="https://codesphere-u.github.io/swarmweaver/og-image.svg">
+
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://codesphere-u.github.io/swarmweaver/#org",
+        "name": "CodeSphere",
+        "url": "https://github.com/codesphere-u",
+        "founder": {
+          "@type": "Person",
+          "@id": "https://codesphere-u.github.io/swarmweaver/#founder",
+          "name": "Akandwanaho Ivan Alvin",
+          "url": "https://github.com/codesphere-u"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://codesphere-u.github.io/swarmweaver/#website",
+        "url": "https://codesphere-u.github.io/swarmweaver/",
+        "name": "SwarmWeaver",
+        "publisher": { "@id": "https://codesphere-u.github.io/swarmweaver/#org" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://codesphere-u.github.io/swarmweaver/#software",
+        "name": "SwarmWeaver",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "macOS, Linux, Windows",
+        "softwareVersion": "1.1.0",
+        "license": "https://opensource.org/license/mit",
+        "url": "https://codesphere-u.github.io/swarmweaver/",
+        "downloadUrl": "https://github.com/codesphere-u/swarmweaver/releases/tag/v1.1.0",
+        "publisher": { "@id": "https://codesphere-u.github.io/swarmweaver/#org" },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD",
+          "availability": "https://schema.org/InStock"
+        },
+        "featureList": [
+          "Topological DAG compilation with automatic WRITE_WRITE and READ_WRITE glob splitting",
+          "Deadlock-free SHARED_READ and EXCLUSIVE_WRITE FileScopeLeaseManager with TTL and SHA-256 lease tokens",
+          "SHA-256 hash-chained CheckpointJournal with 0.00752 ms/node zero-token crash replay",
+          "TypedBlackboard contract verification and JSON-RPC 2.0 Stdio + Streamable HTTP/SSE MCP Server"
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "How does SwarmWeaver stop parallel agents from overwriting the same file?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "At compile time, DAGCompiler builds an intra-level conflict graph across normalized read_globs, write_globs, and ::symbol scopes, then colors conflicting tasks into sequential sub-waves. At runtime, FileScopeLeaseManager enforces SHARED_READ and EXCLUSIVE_WRITE locks in sorted canonical order."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "How much token cost does CheckpointJournal save on mid-workflow crashes?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Across the 20-workflow crash recovery benchmark at 70% progress, SHA-256 hash-chained replay saves 70.0% of tokens (140,000 tokens saved) at 0.00752 ms/node without re-invoking completed agents."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does SwarmWeaver require Redis, Postgres, or external Python dependencies?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "No. The core package (models, DAGCompiler, FileScopeLeaseManager, CheckpointJournal, TypedBlackboard, SwarmOrchestrator, CLI, Stdio MCP server, and HTTP server) uses pure Python 3.11+ standard library with zero runtime dependencies."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body data-analytics="plausible">
+  <div class="page-col">
+    <header class="site-header">
+      <a class="brand-link" href="index.html" aria-label="SwarmWeaver Home">
+        <svg class="brand-wordmark-svg" viewBox="0 0 196 36" width="196" height="36" role="img" aria-label="SwarmWeaver">
+          <path d="M16 4L28 11v14l-12 7-12-7V11L16 4Z" fill="#fbbf24" stroke="#1e1b18" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M11.5 16L16 12l4.5 4M11.5 16L16 23M20.5 16L16 23" stroke="#1e1b18" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="20.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="16" cy="23.2" r="2.6" fill="#fffdf2" stroke="#1e1b18" stroke-width="1.5"/>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="none" stroke="#1e1b18" stroke-width="4.2" stroke-linejoin="round">SwarmWeaver</text>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="#fbbf24">SwarmWeaver</text>
+        </svg>
+      </a>
+      <nav class="header-nav" aria-label="Primary navigation">
+        <a href="studio.html">Studio</a>
+        <a href="proof.html">Benchmark</a>
+        <a href="rules.html">Rules</a>
+        <a href="docs.html">Docs</a>
+        <a class="icon-link" href="https://github.com/codesphere-u/swarmweaver" aria-label="SwarmWeaver on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a10.9 10.9 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
+        <a class="nav-pill" href="docs.html#install">Install</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero-duo" aria-label="SwarmWeaver introduction">
+        <div class="mascot-wrap">
+          <svg viewBox="0 0 136 136" width="136" height="136" role="img" aria-label="SwarmWeaver Hexagonal DAG Loom Mascot">
+            <path d="M68 10L118 39v58L68 126 18 97V39L68 10Z" fill="#fbbf24" stroke="#1e1b18" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M68 24L105 45.5v45L68 112 31 90.5v-45L68 24Z" fill="#fef3c7" stroke="#1e1b18" stroke-width="2.4" stroke-linejoin="round"/>
+            <path d="M47 56L68 41L89 56M47 56L68 89M89 56L68 89M47 56H89" stroke="#1e1b18" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="68" cy="41" r="10.5" fill="#fbbf24" stroke="#1e1b18" stroke-width="3"/>
+            <circle cx="47" cy="57" r="11" fill="#06b6d4" stroke="#1e1b18" stroke-width="3"/>
+            <circle cx="89" cy="57" r="11" fill="#06b6d4" stroke="#1e1b18" stroke-width="3"/>
+            <circle cx="68" cy="90" r="13" fill="#fffdf2" stroke="#1e1b18" stroke-width="3"/>
+            <path d="M62 90l4.2 4.2 8.2-8.4" stroke="#0891b2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="110" cy="30" r="12" fill="#cffafe" stroke="#1e1b18" stroke-width="2.6"/>
+            <text x="110" y="34" text-anchor="middle" font-family="ui-monospace, Menlo, monospace" font-size="10.5" font-weight="800" fill="#083344">0x</text>
+          </svg>
+        </div>
+        <div class="hero-copy">
+          <h1>Parallel agent swarms that never clobber files.</h1>
+          <p class="hero-sub">Deterministic DAG wave compilation, file-scope read/write leases, typed blackboards, and SHA-256 checkpoint resume in pure Python.</p>
+        </div>
+      </section>
+
+      <section class="cta-area" aria-label="Install options">
+        <div class="split-btn-group">
+          <button class="split-main" type="button" id="heroCopyBtn">
+            <strong>Install SwarmWeaver v1.1.0</strong>
+            <span>Python 3.11+ · 0 core dependencies</span>
+          </button>
+          <button class="split-caret" type="button" id="heroToggleBtn" aria-expanded="false" aria-controls="heroPopover" aria-label="Toggle install command methods">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+        </div>
+        <div class="cmd-caption" id="heroCmdPreview">pip install -e . &amp;&amp; swarmweaver demo</div>
+
+        <div class="cta-popover" id="heroPopover" role="region" aria-label="Alternative install commands">
+          <div class="pop-tabs" role="tablist">
+            <button class="pop-tab active" type="button" data-pop-cmd="pip install -e . && swarmweaver demo">pip + demo</button>
+            <button class="pop-tab" type="button" data-pop-cmd="swarmweaver plan && swarmweaver benchmark">plan + bench</button>
+            <button class="pop-tab" type="button" data-pop-cmd="swarmweaver mcp">MCP Stdio</button>
+            <button class="pop-tab" type="button" data-pop-cmd="swarmweaver serve-http --port 8000">HTTP Portal</button>
+          </div>
+          <div class="pop-cmd">
+            <code id="popCmdCode">pip install -e . &amp;&amp; swarmweaver demo</code>
+            <button class="copy-icon-btn" type="button" id="popCopyBtn" aria-label="Copy selected command">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="preview-frame" aria-label="Interactive SwarmWeaver workflow preview">
+        <div class="frame-bar">
+          <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="frame-tabs" role="tablist">
+            <button class="frame-tab active" type="button" data-preview-tab="plan">Wave Plan</button>
+            <button class="frame-tab" type="button" data-preview-tab="resume">Crash Resume</button>
+            <button class="frame-tab" type="button" data-preview-tab="mcp">MCP Tools</button>
+          </div>
+          <a class="frame-open-link" href="studio.html">Open Studio -&gt;</a>
+        </div>
+        <div class="preview-body">
+          <pre class="code-block" id="homePreviewCode">$ swarmweaver plan
+SwarmWeaver v1.1.0 — Conflict-Aware Wave Plan
+Total Tasks          : 10   | Topological Levels : 5
+Conflict-Free Waves  : 7    | Conflicts Auto-Split: 2
+Critical Path        : 1170 ms (1.46x speedup vs 1710 ms)
+--------------------------------------------------------------------
+  Wave 01: 01_ast_audit
+  Wave 02: 02_schema_migration, 03_jwt_verifier
+  Wave 03: 04_rbac_policy   (split: WRITE_WRITE src/auth/jwt.py)
+  Wave 04: 05_api_gateway
+  Wave 05: 06_rate_limiter  (split: WRITE_WRITE src/api/deps.py)</pre>
+        </div>
+        <div class="preview-foot">
+          <span>Compile locally in Python or simulate right in your browser</span>
+          <div class="preview-foot-links">
+            <a href="studio.html">Run DAG Studio</a>
+            <a href="proof.html">Read Benchmark</a>
+          </div>
+        </div>
+      </section>
+
+      <hr class="hairline">
+
+      <section class="editorial-grid" aria-label="Core orchestration capabilities">
+        <div>
+          <h2>Conflict-free waves.</h2>
+          <p><code>DAGCompiler</code> runs Kahn's sort across dependencies, detects cycles with full path chains, and splits overlapping <code>read_globs</code>, <code>write_globs</code>, and <code>::symbol</code> targets into safe sub-waves.</p>
+        </div>
+        <div>
+          <h2>Ordered runtime leases.</h2>
+          <p><code>FileScopeLeaseManager</code> grants <code>SHARED_READ</code> and <code>EXCLUSIVE_WRITE</code> locks in sorted canonical scope order with monotonic TTL eviction and SHA-256 lease tokens.</p>
+        </div>
+        <div>
+          <h2>Sub-millisecond replay.</h2>
+          <p><code>CheckpointJournal</code> chains each finished node via <code>prev_hash -&gt; entry_hash</code> SHA-256 digests, replaying 8 completed tasks in <code>0.077 ms</code> without re-spending LLM tokens.</p>
+        </div>
+        <div>
+          <h2>Typed blackboard handoffs.</h2>
+          <p><code>TypedBlackboard</code> validates typed contracts (<code>dict</code>, <code>str</code>, predicates) before downstream agents start, cutting silent schema drift and partial corrupt writes.</p>
+        </div>
+      </section>
+
+      <hr class="hairline">
+
+      <section class="ecosystem-section" aria-label="Standards and runtime integrations">
+        <h2>Zero dependencies, open interfaces</h2>
+        <p class="ecosystem-sub">Run SwarmWeaver standalone in Python 3.11+, wire it into Claude Desktop or Cursor over Stdio MCP, or host the Streamable HTTP/SSE portal.</p>
+        <div class="eco-badges">
+          <div class="eco-item">
+            <div class="eco-circle" aria-hidden="true">DAG</div>
+            <span>Kahn Sort</span>
+          </div>
+          <div class="eco-item">
+            <div class="eco-circle" aria-hidden="true">LOCK</div>
+            <span>Glob Leases</span>
+          </div>
+          <div class="eco-item">
+            <div class="eco-circle" aria-hidden="true">SHA</div>
+            <span>Hash Chain</span>
+          </div>
+          <div class="eco-item">
+            <div class="eco-circle" aria-hidden="true">MCP</div>
+            <span>JSON-RPC 2.0</span>
+          </div>
+          <div class="eco-item">
+            <div class="eco-circle" aria-hidden="true">SSE</div>
+            <span>HTTP Portal</span>
+          </div>
+        </div>
+        <p class="inline-cta-links">Try the interactive compiler in <a href="studio.html">Studio</a> or review <a href="proof.html">verified numbers</a> and <a href="docs.html">CLI/SDK docs</a>.</p>
+      </section>
+
+      <hr class="hairline">
+
+      <section aria-label="Frequently asked questions">
+        <h2 class="sec-title">Frequently asked questions</h2>
+        <p class="sec-sub">How SwarmWeaver keeps concurrent coding agents predictable on real repositories.</p>
+        <div class="faq-stack">
+          <details class="faq-item" open>
+            <summary>Why split waves at compile time if runtime file locks exist?</summary>
+            <p>Runtime locks stop silent overwrites, yet two agents launched blindly in parallel still waste a worker slot waiting or colliding. Compiling conflict-free waves beforehand schedules independent files together and sequences conflicting writes deterministically.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Can two agents edit different functions in the same file concurrently?</summary>
+            <p>Yes. When both tasks narrow their scope using symbol qualifiers such as <code>src/auth/jwt.py::verify_token</code> and <code>src/auth/jwt.py::rotate_keys</code>, normalized scope intersection treats them as disjoint symbol locks.</p>
+          </details>
+          <details class="faq-item">
+            <summary>What happens if someone edits or corrupts a checkpoint journal on disk?</summary>
+            <p><code>swarmweaver verify-journal</code> and <code>CheckpointJournal.verify_integrity()</code> recompute every canonical SHA-256 link against <code>prev_hash</code> and flag the exact <code>tampered_sequence</code> record.</p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="studio.html">Studio</a>
+        <span>·</span>
+        <a href="proof.html">Benchmark</a>
+        <span>·</span>
+        <a href="rules.html">Rules</a>
+        <span>·</span>
+        <a href="docs.html">Docs</a>
+        <span>·</span>
+        <a href="llms.txt">llms.txt</a>
+        <span>·</span>
+        <a href="https://github.com/codesphere-u/swarmweaver">GitHub</a>
+      </div>
+      <div>Built by Akandwanaho Ivan Alvin · CodeSphere · MIT License · Privacy-first Plausible analytics</div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

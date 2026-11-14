@@ -2,6 +2,12 @@
 
 All notable changes to `swarmweaver` will be documented in this file.
 
+## [1.1.0] - 2026-11-14
+### Added
+- **Interactive Editorial Website & Browser Studio (`website/`)**: Golden Amber & Ocean Cyan Handy-inspired multi-page website (`index.html`, `studio.html`, `proof.html`, `rules.html`, `docs.html`) featuring a live client-side DAG Wave Conflict Simulator, Checkpoint Crash/Resume Token Savings Calculator, and MCP Server config generator.
+- **GEO / Search Discovery & Marketing Playbooks**: `llms.txt`, `llms-full.txt`, `robots.txt`, `sitemap.xml`, `manifest.webmanifest`, Schema.org `@graph` JSON-LD, `website/marketing/LAUNCH_PLAYBOOK.md`, and `website/marketing/PROGRAMMATIC_SEO.md`.
+- **Production Documentation & Pages Deployment**: Added [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md), [docs/MCP_AND_CHECKPOINTS.md](docs/MCP_AND_CHECKPOINTS.md), `.github/workflows/pages.yml`, and automated website/SEO/documentation regression tests (`tests/test_website_and_docs.py`).
+
 ## [1.0.0] - 2026-11-07
 
 ### Added

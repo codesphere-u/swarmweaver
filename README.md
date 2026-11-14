@@ -1,12 +1,17 @@
 # SwarmWeaver
 
 [![CI](https://github.com/codesphere-u/swarmweaver/actions/workflows/ci.yml/badge.svg)](https://github.com/codesphere-u/swarmweaver/actions/workflows/ci.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![Website](https://img.shields.io/badge/Website-Live%20Docs%20%26%20Studio-fbbf24.svg)](https://codesphere-u.github.io/swarmweaver/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-06b6d4.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
-[![MCP Compatible](https://img.shields.io/badge/MCP-JSON--RPC%202.0-purple.svg)](#mcp-server-integration)
+[![MCP Compatible](https://img.shields.io/badge/MCP-JSON--RPC%202.0-0891b2.svg)](#mcp-server-integration)
 [![Zero Dependencies](https://img.shields.io/badge/runtime%20dependencies-0-brightgreen.svg)](pyproject.toml)
 
 **Deterministic Multi-Agent DAG Orchestrator, File-Scope Lease Conflict Guard & Crash-Safe Checkpoint Resume Engine (with MCP Server).**
+
+> **Live Website & Browser Studio:** [codesphere-u.github.io/swarmweaver](https://codesphere-u.github.io/swarmweaver/) · [DAG Wave Studio](https://codesphere-u.github.io/swarmweaver/studio.html) · [Benchmark](https://codesphere-u.github.io/swarmweaver/proof.html) · [Rules & MCP](https://codesphere-u.github.io/swarmweaver/rules.html) · [Docs](https://codesphere-u.github.io/swarmweaver/docs.html)
+>
+> **Guides:** [Getting Started](docs/GETTING_STARTED.md) · [MCP & Checkpoints](docs/MCP_AND_CHECKPOINTS.md) · [Architecture](docs/architecture.md) · [llms.txt](llms.txt)
 
 ---
 
@@ -47,7 +52,7 @@ flowchart TD
 
 ---
 
-## Verified Benchmark Results (`v1.0.0`)
+## Verified Benchmark Results (`v1.1.0`)
 
 Reproducible via `swarmweaver benchmark` (zero external runtime dependencies):
 

@@ -416,7 +416,7 @@ def run_benchmark_suite() -> dict[str, Any]:
     total_ms = (time.perf_counter_ns() - t0) / 1_000_000.0
 
     return {
-        "suite": "swarmweaver-v1.0.0",
+        "suite": "swarmweaver-v1.1.0",
         "total_benchmark_elapsed_ms": round(total_ms, 2),
         "dag_compilation_200_tasks": dag_metrics,
         "parallel_conflict_guard_50_tasks": conflict_metrics,

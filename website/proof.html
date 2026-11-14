@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Benchmark &amp; Proof — SwarmWeaver v1.1.0 Reproducible Verification</title>
+  <meta name="description" content="Verified v1.1.0 benchmark across 200-task DAG compilation (0.999 ms P50), 50-task lock tests (0 races), and 70% checkpoint replay.">
+  <link rel="canonical" href="https://codesphere-u.github.io/swarmweaver/proof.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#fbbf24">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SwarmWeaver v1.1.0 Benchmark — 0.999 ms DAG P50 &amp; 0 Race Conditions">
+  <meta property="og:description" content="Reproducible metrics from swarmweaver benchmark and swarmweaver demo across DAG planning, leases, and SHA-256 recovery.">
+  <meta property="og:url" content="https://codesphere-u.github.io/swarmweaver/proof.html">
+  <meta property="og:image" content="https://codesphere-u.github.io/swarmweaver/og-image.svg">
+
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "SwarmWeaver v1.1.0 Reproducible Benchmark Results",
+    "url": "https://codesphere-u.github.io/swarmweaver/proof.html",
+    "author": { "@id": "https://codesphere-u.github.io/swarmweaver/#org" },
+    "isPartOf": { "@id": "https://codesphere-u.github.io/swarmweaver/#website" }
+  }
+  </script>
+</head>
+<body data-analytics="plausible">
+  <div class="page-col">
+    <header class="site-header">
+      <a class="brand-link" href="index.html" aria-label="SwarmWeaver Home">
+        <svg class="brand-wordmark-svg" viewBox="0 0 196 36" width="196" height="36" role="img" aria-label="SwarmWeaver">
+          <path d="M16 4L28 11v14l-12 7-12-7V11L16 4Z" fill="#fbbf24" stroke="#1e1b18" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M11.5 16L16 12l4.5 4M11.5 16L16 23M20.5 16L16 23" stroke="#1e1b18" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="20.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="16" cy="23.2" r="2.6" fill="#fffdf2" stroke="#1e1b18" stroke-width="1.5"/>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="none" stroke="#1e1b18" stroke-width="4.2" stroke-linejoin="round">SwarmWeaver</text>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="#fbbf24">SwarmWeaver</text>
+        </svg>
+      </a>
+      <nav class="header-nav" aria-label="Primary navigation">
+        <a href="studio.html">Studio</a>
+        <a class="active" href="proof.html">Benchmark</a>
+        <a href="rules.html">Rules</a>
+        <a href="docs.html">Docs</a>
+        <a class="icon-link" href="https://github.com/codesphere-u/swarmweaver" aria-label="SwarmWeaver on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a10.9 10.9 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
+        <a class="nav-pill" href="docs.html#install">Install</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <h1>Reproducible Benchmark</h1>
+        <p class="hero-sub">Every figure below comes straight from running <code>swarmweaver benchmark</code> and <code>swarmweaver demo</code> on <code>v1.1.0</code>.</p>
+      </section>
+
+      <section aria-label="Headline benchmark scores">
+        <div class="score-row">
+          <div class="score-cell"><span>200-Task DAG P50</span><strong>0.999 ms</strong></div>
+          <div class="score-cell"><span>Parallel Races</span><strong>0 observed</strong></div>
+          <div class="score-cell"><span>Resume Savings</span><strong>70.0%</strong></div>
+          <div class="score-cell"><span>Cycle Recall</span><strong>100.0%</strong></div>
+        </div>
+      </section>
+
+      <section class="editorial-article">
+        <h2>Four-part benchmark suite</h2>
+        <div class="doc-table-wrap">
+          <table class="doc-table">
+            <thead>
+              <tr>
+                <th>Benchmark Axis</th>
+                <th>Observed Result</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>200-Task DAG Compilation</strong></td>
+                <td><span class="pill pill-good">0.999 ms P50</span></td>
+                <td><code>P95 = 6.801 ms</code> · Compiled into 30 waves with 160 overlapping file globs split.</td>
+              </tr>
+              <tr>
+                <td><strong>50 Conflicting File-Edit Tasks</strong></td>
+                <td><span class="pill pill-cyan">100.0% prevented</span></td>
+                <td>Zero overlapping write-write or read-write races under concurrent worker threads.</td>
+              </tr>
+              <tr>
+                <td><strong>20 Crash-Recovery Runs (70% crash)</strong></td>
+                <td><span class="pill pill-amber">140,000 tokens saved</span></td>
+                <td>70.0% token reduction across 20 runs with <code>0.00752 ms/node</code> SHA-256 journal replay.</td>
+              </tr>
+              <tr>
+                <td><strong>15 Cycle &amp; Contract Traps</strong></td>
+                <td><span class="pill pill-good">15 / 15 detected</span></td>
+                <td>100.0% detection recall across cyclic dependency loops and violated blackboard schemas.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Verbatim CLI output (v1.1.0)</h2>
+        <div class="doc-codeblock">
+          <pre><span class="syn-cmd">swarmweaver benchmark</span>
+
+SwarmWeaver v1.1.0 — Reproducible Benchmark Suite
+========================================================================
+1. 200-Task DAG Compilation &amp; Wave Scheduling : P50=0.999 ms | P95=6.801 ms | 30 waves (160 conflicts split)
+2. 50 Parallel Conflicting File-Edit Tasks    : 0 race conditions | 100.0% collision prevention
+3. 20 Crash-Recovery Workflows (70% Crash)    : 70.0% tokens saved (140,000 tokens) | 0.00752 ms/node replay
+4. Cycle &amp; Contract Violation Detection (15)  : 15/15 detected (100.0% recall)
+========================================================================</pre>
+          <button class="copy-icon-btn" type="button" data-copy="swarmweaver benchmark" aria-label="Copy benchmark command">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+
+        <h2>10-agent refactoring crash &amp; resume walkthrough</h2>
+        <p>The bundled demo injects an intentional crash at node <code>08_integration_tests</code> after spending <code>8,600</code> tokens across 8 completed tasks, then resumes from the SHA-256 checkpoint journal.</p>
+        <div class="doc-codeblock">
+          <pre><span class="syn-cmd">swarmweaver demo</span>
+
+[1] Compiled 10 tasks into 7 conflict-free waves (2 file collisions split).
+[2] Run #1 (Injected Crash at '08_integration_tests'): status=FAILED, completed=8/10 nodes, tokens_spent=8,600
+[3] Run #2 (Crash-Safe Checkpoint Resume): status=COMPLETED, replayed=8 nodes in 0.077 ms, tokens_saved=8,600 tokens!
+[4] SHA-256 Checkpoint Hash Chain Verified: valid=True, records=10, head=793c825934b11127...</pre>
+          <button class="copy-icon-btn" type="button" data-copy="swarmweaver demo" aria-label="Copy demo command">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <span>·</span>
+        <a href="studio.html">Studio</a>
+        <span>·</span>
+        <a href="rules.html">Rules</a>
+        <span>·</span>
+        <a href="docs.html">Docs</a>
+        <span>·</span>
+        <a href="https://github.com/codesphere-u/swarmweaver">GitHub</a>
+      </div>
+      <div>SwarmWeaver v1.1.0 · CodeSphere · MIT License · Privacy-first Plausible analytics</div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

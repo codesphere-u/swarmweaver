@@ -21,7 +21,7 @@ from swarmweaver.models import (
     WavePlan,
 )
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = [
     "BlackboardContractError",

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rules &amp; Primitives — SwarmWeaver Lease Rules, MCP Tools &amp; HTTP API</title>
+  <meta name="description" content="Inspect SwarmWeaver primitives, file-scope lease rules, SHA-256 checkpoint fields, MCP tools, resources, prompts, and HTTP endpoints.">
+  <link rel="canonical" href="https://codesphere-u.github.io/swarmweaver/rules.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#fbbf24">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SwarmWeaver Primitives — File Leases, Checkpoints, MCP &amp; HTTP Matrix">
+  <meta property="og:description" content="Filter every SwarmWeaver scheduling invariant, lock rule, JSON-RPC 2.0 MCP tool, resource URI, and REST endpoint.">
+  <meta property="og:url" content="https://codesphere-u.github.io/swarmweaver/rules.html">
+  <meta property="og:image" content="https://codesphere-u.github.io/swarmweaver/og-image.svg">
+
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "SwarmWeaver Engine Invariants, MCP Surface & REST Endpoints",
+    "url": "https://codesphere-u.github.io/swarmweaver/rules.html",
+    "author": { "@id": "https://codesphere-u.github.io/swarmweaver/#org" },
+    "isPartOf": { "@id": "https://codesphere-u.github.io/swarmweaver/#website" }
+  }
+  </script>
+</head>
+<body data-analytics="plausible">
+  <div class="page-col">
+    <header class="site-header">
+      <a class="brand-link" href="index.html" aria-label="SwarmWeaver Home">
+        <svg class="brand-wordmark-svg" viewBox="0 0 196 36" width="196" height="36" role="img" aria-label="SwarmWeaver">
+          <path d="M16 4L28 11v14l-12 7-12-7V11L16 4Z" fill="#fbbf24" stroke="#1e1b18" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M11.5 16L16 12l4.5 4M11.5 16L16 23M20.5 16L16 23" stroke="#1e1b18" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="20.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="16" cy="23.2" r="2.6" fill="#fffdf2" stroke="#1e1b18" stroke-width="1.5"/>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="none" stroke="#1e1b18" stroke-width="4.2" stroke-linejoin="round">SwarmWeaver</text>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="#fbbf24">SwarmWeaver</text>
+        </svg>
+      </a>
+      <nav class="header-nav" aria-label="Primary navigation">
+        <a href="studio.html">Studio</a>
+        <a href="proof.html">Benchmark</a>
+        <a class="active" href="rules.html">Rules</a>
+        <a href="docs.html">Docs</a>
+        <a class="icon-link" href="https://github.com/codesphere-u/swarmweaver" aria-label="SwarmWeaver on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a10.9 10.9 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
+        <a class="nav-pill" href="docs.html#install">Install</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <h1>Engine Rules, MCP &amp; API Surface</h1>
+        <p class="hero-sub">Filter all DAG invariants, file-scope lease locks, SHA-256 checkpoint fields, MCP tools, resources, prompts, and REST endpoints.</p>
+      </section>
+
+      <section aria-label="Searchable SwarmWeaver capability catalog">
+        <div class="rules-filter">
+          <input class="input" id="rulesSearchInput" type="search" placeholder="Filter by rule, MCP tool, URI, or route (e.g. WRITE_WRITE, lease, mcp)..." aria-label="Filter rules and API catalog">
+          <select class="select" id="rulesCategorySelect" aria-label="Filter category">
+            <option value="all">All Categories</option>
+            <option value="dag">DAG &amp; Leases</option>
+            <option value="state">Checkpoints &amp; Blackboard</option>
+            <option value="mcp">MCP Tools, Resources &amp; Prompts</option>
+            <option value="http">HTTP &amp; CLI</option>
+          </select>
+        </div>
+
+        <div class="doc-table-wrap">
+          <table class="doc-table" id="rulesTable">
+            <thead>
+              <tr>
+                <th>Surface / ID</th>
+                <th>Category</th>
+                <th>Guarantee &amp; Behavior</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-cat="dag">
+                <td><code>WRITE_WRITE</code></td>
+                <td><span class="pill pill-bad">DAG &amp; Leases</span></td>
+                <td>Splits or blocks two tasks modifying overlapping file paths, directory globs (`**`), or identical `::symbol` slices.</td>
+              </tr>
+              <tr data-cat="dag">
+                <td><code>READ_WRITE</code></td>
+                <td><span class="pill pill-warn">DAG &amp; Leases</span></td>
+                <td>Serializes readers against an active writer on matching file globs so agents never read half-written code.</td>
+              </tr>
+              <tr data-cat="dag">
+                <td><code>SHARED_READ</code></td>
+                <td><span class="pill pill-good">DAG &amp; Leases</span></td>
+                <td>Allows arbitrary parallel read-only tasks (`01_ast_audit` style) on shared glob trees without contention.</td>
+              </tr>
+              <tr data-cat="dag">
+                <td><code>path.py::symbol</code></td>
+                <td><span class="pill pill-cyan">DAG &amp; Leases</span></td>
+                <td>Narrows lock scope to a specific symbol; two functions in one file can execute in the same wave when non-overlapping.</td>
+              </tr>
+              <tr data-cat="dag">
+                <td><code>CycleDetectedError</code></td>
+                <td><span class="pill pill-bad">DAG &amp; Leases</span></td>
+                <td>Reconstructs exact cyclic path (`A -&gt; B -&gt; A`) via Kahn sort + iterative DFS before scheduling starts.</td>
+              </tr>
+              <tr data-cat="state">
+                <td><code>prev_hash -&gt; entry_hash</code></td>
+                <td><span class="pill pill-amber">State</span></td>
+                <td>Append-only canonical JSON SHA-256 hash chain linking every finished task in `CheckpointJournal`.</td>
+              </tr>
+              <tr data-cat="state">
+                <td><code>TypedBlackboard</code></td>
+                <td><span class="pill pill-cyan">State</span></td>
+                <td>Validates `input_contract` (`str`, `int`, `float`, `bool`, `dict`, `list`, callables) and `output_contract` lineage.</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>swarmweaver_plan_waves</code></td>
+                <td><span class="pill pill-amber">MCP Tool</span></td>
+                <td>Compiles `TaskSpec` payloads into conflict-free waves and critical-path metrics (`readOnlyHint: true`).</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>swarmweaver_check_file_conflicts</code></td>
+                <td><span class="pill pill-amber">MCP Tool</span></td>
+                <td>Tests a set of parallel task file globs for `WRITE_WRITE` or `READ_WRITE` overlaps without running tasks.</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>swarmweaver_inspect_checkpoint</code></td>
+                <td><span class="pill pill-amber">MCP Tool</span></td>
+                <td>Verifies `.jsonl` checkpoint integrity and separates resumable completed task IDs from pending IDs.</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>swarmweaver_run_benchmark</code></td>
+                <td><span class="pill pill-amber">MCP Tool</span></td>
+                <td>Runs the 4-part deterministic benchmark suite and emits structured JSON latency &amp; token metrics.</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>swarmweaver://workflow/demo-10-agent</code></td>
+                <td><span class="pill pill-cyan">MCP Resource</span></td>
+                <td>Exposes the canonical 10-agent full-stack refactoring DAG specification with two intentional file overlaps.</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>swarmweaver://dag/lease-conflict-rules</code></td>
+                <td><span class="pill pill-cyan">MCP Resource</span></td>
+                <td>Formal specification of `read_globs`, `write_globs`, `**` wildcard, and `::symbol` rules.</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>plan-safe-swarm</code></td>
+                <td><span class="pill pill-good">MCP Prompt</span></td>
+                <td>Prompt template decomposing engineering objectives into typed contracts and disjoint file scopes.</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>resolve-file-lease-conflict</code></td>
+                <td><span class="pill pill-good">MCP Prompt</span></td>
+                <td>Diagnoses overlapping globs and proposes wave splits or disjoint file boundaries.</td>
+              </tr>
+              <tr data-cat="mcp">
+                <td><code>recover-crashed-workflow</code></td>
+                <td><span class="pill pill-good">MCP Prompt</span></td>
+                <td>Audits a `checkpoint.jsonl` journal and resumes only pending downstream nodes.</td>
+              </tr>
+              <tr data-cat="http">
+                <td><code>POST /mcp</code> &amp; <code>GET /mcp</code></td>
+                <td><span class="pill pill-cyan">HTTP / CLI</span></td>
+                <td>Streamable HTTP JSON-RPC 2.0 endpoint and Server-Sent Events (`text/event-stream`) transport.</td>
+              </tr>
+              <tr data-cat="http">
+                <td><code>POST /api/plan</code> &amp; <code>/api/conflicts</code></td>
+                <td><span class="pill pill-cyan">HTTP / CLI</span></td>
+                <td>REST endpoints returning compiled `WavePlan` JSON and pairwise file-conflict diagnostics.</td>
+              </tr>
+              <tr data-cat="http">
+                <td><code>GET /health</code>, <code>/readyz</code>, <code>/metrics</code></td>
+                <td><span class="pill pill-good">HTTP / CLI</span></td>
+                <td>Liveness probes, Prometheus text exposition, and JSON telemetry counters for request latency and conflicts split.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <span>·</span>
+        <a href="studio.html">Studio</a>
+        <span>·</span>
+        <a href="proof.html">Benchmark</a>
+        <span>·</span>
+        <a href="docs.html">Docs</a>
+        <span>·</span>
+        <a href="https://github.com/codesphere-u/swarmweaver">GitHub</a>
+      </div>
+      <div>SwarmWeaver v1.1.0 · CodeSphere · MIT License · Privacy-first Plausible analytics</div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

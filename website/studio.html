@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Studio — SwarmWeaver Interactive DAG Conflict &amp; Crash Recovery Simulator</title>
+  <meta name="description" content="Simulate conflict-aware DAG waves, file-glob write/write locks, crash-recovery token savings, and MCP configs right in your browser.">
+  <link rel="canonical" href="https://codesphere-u.github.io/swarmweaver/studio.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#fbbf24">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SwarmWeaver Studio — Browser DAG Wave &amp; Conflict Compiler">
+  <meta property="og:description" content="Test parallel read/write glob overlaps, cycle traps, checkpoint crash recovery savings, and MCP server configs locally in your browser.">
+  <meta property="og:url" content="https://codesphere-u.github.io/swarmweaver/studio.html">
+  <meta property="og:image" content="https://codesphere-u.github.io/swarmweaver/og-image.svg">
+
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "SwarmWeaver Studio",
+    "url": "https://codesphere-u.github.io/swarmweaver/studio.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "isPartOf": { "@id": "https://codesphere-u.github.io/swarmweaver/#website" }
+  }
+  </script>
+</head>
+<body data-analytics="plausible">
+  <div class="page-col">
+    <header class="site-header">
+      <a class="brand-link" href="index.html" aria-label="SwarmWeaver Home">
+        <svg class="brand-wordmark-svg" viewBox="0 0 196 36" width="196" height="36" role="img" aria-label="SwarmWeaver">
+          <path d="M16 4L28 11v14l-12 7-12-7V11L16 4Z" fill="#fbbf24" stroke="#1e1b18" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M11.5 16L16 12l4.5 4M11.5 16L16 23M20.5 16L16 23" stroke="#1e1b18" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="20.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="16" cy="23.2" r="2.6" fill="#fffdf2" stroke="#1e1b18" stroke-width="1.5"/>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="none" stroke="#1e1b18" stroke-width="4.2" stroke-linejoin="round">SwarmWeaver</text>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="#fbbf24">SwarmWeaver</text>
+        </svg>
+      </a>
+      <nav class="header-nav" aria-label="Primary navigation">
+        <a class="active" href="studio.html">Studio</a>
+        <a href="proof.html">Benchmark</a>
+        <a href="rules.html">Rules</a>
+        <a href="docs.html">Docs</a>
+        <a class="icon-link" href="https://github.com/codesphere-u/swarmweaver" aria-label="SwarmWeaver on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a10.9 10.9 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
+        <a class="nav-pill" href="docs.html#install">Install</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <h1>SwarmWeaver Studio</h1>
+        <p class="hero-sub">Compile parallel DAG waves, test file-glob collisions, calculate SHA-256 crash-replay savings, and copy MCP snippets right in your browser.</p>
+      </section>
+
+      <section class="studio-frame" aria-label="Interactive DAG Compiler and Crash Recovery Studio">
+        <div class="handy-tabs-bar">
+          <div class="handy-tabs" role="tablist">
+            <button class="handy-tab active" type="button" data-studio-tab="dag">DAG Wave Compiler</button>
+            <button class="handy-tab" type="button" data-studio-tab="resume">Crash Recovery</button>
+            <button class="handy-tab" type="button" data-studio-tab="mcp">MCP &amp; CI Config</button>
+          </div>
+          <span class="version-tag">client-side v1.1.0</span>
+        </div>
+
+        <div class="studio-panel active" data-studio-panel="dag">
+          <div class="field">
+            <label>Load Scenario Preset</label>
+            <div class="preset-pills" id="dagPresetPills">
+              <button class="chip-btn active" type="button" data-dag-preset="refactor">10-Agent Full-Stack Refactor</button>
+              <button class="chip-btn" type="button" data-dag-preset="symbol">Symbol-Scoped Co-Edits</button>
+              <button class="chip-btn" type="button" data-dag-preset="cycle">Cyclic Dependency Trap</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="dagJsonInput">TaskSpec List (JSON)</label>
+            <textarea class="textarea" id="dagJsonInput" spellcheck="false"></textarea>
+          </div>
+
+          <div class="toolbar-between" style="margin-bottom: 0.75rem;">
+            <span class="eyebrow-label" style="margin: 0;">Static Browser DAG Compilation</span>
+            <div style="display: flex; gap: 0.45rem;">
+              <button class="action-mini" type="button" id="dagCompileBtn">Compile Waves</button>
+              <button class="action-mini" type="button" id="dagResetBtn">Reset Preset</button>
+            </div>
+          </div>
+
+          <div class="score-row">
+            <div class="score-cell"><span>Total Tasks</span><strong id="dagTotalTasks">0</strong></div>
+            <div class="score-cell"><span>Safe Waves</span><strong id="dagWaveCount">0</strong></div>
+            <div class="score-cell"><span>Auto-Split</span><strong id="dagSplitCount">0</strong></div>
+            <div class="score-cell"><span>Speedup</span><strong id="dagSpeedup">1.00x</strong></div>
+          </div>
+
+          <div class="diag-note" id="dagDiagNote">Ready to compile TaskSpec dependencies and file globs.</div>
+          <div class="rw-list" id="dagResultsList"></div>
+        </div>
+
+        <div class="studio-panel" data-studio-panel="resume">
+          <div class="form-row-2">
+            <div class="field">
+              <label for="simNodesInput">Total DAG Tasks (10–200)</label>
+              <input class="input" id="simNodesInput" type="number" min="4" max="500" value="10">
+            </div>
+            <div class="field">
+              <label for="simTokensInput">Avg Tokens per Task</label>
+              <input class="input" id="simTokensInput" type="number" min="100" max="20000" value="1060">
+            </div>
+          </div>
+          <div class="form-row-2">
+            <div class="field">
+              <label for="simCrashPctInput">Crash Point (% Complete before crash)</label>
+              <input class="input" id="simCrashPctInput" type="number" min="10" max="95" value="80">
+            </div>
+            <div class="field">
+              <label for="simWorkflowInput">Workflow Identifier</label>
+              <input class="input" id="simWorkflowInput" type="text" value="refactor-auth-v11">
+            </div>
+          </div>
+
+          <div class="score-row">
+            <div class="score-cell"><span>Replayed Nodes</span><strong id="simReplayed">8</strong></div>
+            <div class="score-cell"><span>Tokens Saved</span><strong id="simTokensSaved">8,480</strong></div>
+            <div class="score-cell"><span>Replay Latency</span><strong id="simReplayMs">0.060 ms</strong></div>
+            <div class="score-cell"><span>Savings Rate</span><strong id="simSavingsPct">80.0%</strong></div>
+          </div>
+
+          <div class="diag-note" id="simHashNote">SHA-256 hash chain verified across committed nodes prior to failure injection.</div>
+          <pre class="code-block" id="simJournalOutput"></pre>
+        </div>
+
+        <div class="studio-panel" data-studio-panel="mcp">
+          <div class="field">
+            <label for="mcpClientSelect">Target Integration Profile</label>
+            <select class="select" id="mcpClientSelect">
+              <option value="claude-desktop">Claude Desktop / Cursor (mcp.json Stdio)</option>
+              <option value="github-actions">GitHub Actions Quality &amp; Plan Gate</option>
+              <option value="http-server">HTTP/SSE Portal &amp; REST Scheduler</option>
+              <option value="docker">Hardened Non-Root Docker Container</option>
+            </select>
+          </div>
+          <div class="toolbar-between" style="margin-bottom: 0.65rem;">
+            <span class="eyebrow-label" style="margin: 0;" id="mcpSnippetTitle">Stdio JSON-RPC 2.0 Config</span>
+            <button class="action-mini" type="button" id="copyMcpSnippetBtn">Copy Snippet</button>
+          </div>
+          <pre class="code-block" id="mcpSnippetOutput"></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <span>·</span>
+        <a href="proof.html">Benchmark</a>
+        <span>·</span>
+        <a href="rules.html">Rules</a>
+        <span>·</span>
+        <a href="docs.html">Docs</a>
+        <span>·</span>
+        <a href="https://github.com/codesphere-u/swarmweaver">GitHub</a>
+      </div>
+      <div>SwarmWeaver v1.1.0 · CodeSphere · MIT License · Privacy-first Plausible analytics</div>
+    </footer>
+  </div>
+
+  <script type="application/json" id="sw-studio-presets">
+  {
+    "refactor": [
+      {"task_id": "01_ast_audit", "title": "Scan AST surface", "depends_on": [], "read_globs": ["src/**/*.py"], "write_globs": [], "estimated_ms": 120},
+      {"task_id": "02_schema_migration", "title": "Generate OAuth2 migration", "depends_on": ["01_ast_audit"], "read_globs": ["src/db/models.py"], "write_globs": ["src/db/migrations/004_oauth.sql", "src/db/models.py"], "estimated_ms": 180},
+      {"task_id": "03_jwt_verifier", "title": "Refactor JWT verifier", "depends_on": ["01_ast_audit"], "read_globs": ["src/auth/config.py"], "write_globs": ["src/auth/jwt.py", "src/auth/keys.py"], "estimated_ms": 200},
+      {"task_id": "04_rbac_policy", "title": "Harden RBAC claims parser", "depends_on": ["01_ast_audit"], "read_globs": ["src/auth/jwt.py"], "write_globs": ["src/auth/jwt.py", "src/auth/rbac.py"], "estimated_ms": 160},
+      {"task_id": "05_api_gateway", "title": "Wire FastAPI routes", "depends_on": ["02_schema_migration", "03_jwt_verifier", "04_rbac_policy"], "read_globs": ["src/auth/*.py", "src/db/models.py"], "write_globs": ["src/api/routes.py", "src/api/deps.py"], "estimated_ms": 220},
+      {"task_id": "06_rate_limiter", "title": "Attach rate limiter deps", "depends_on": ["03_jwt_verifier", "04_rbac_policy"], "read_globs": ["src/api/deps.py"], "write_globs": ["src/api/deps.py", "src/api/ratelimit.py"], "estimated_ms": 150},
+      {"task_id": "07_openapi_client", "title": "Regenerate TS client", "depends_on": ["05_api_gateway"], "read_globs": ["src/api/routes.py"], "write_globs": ["web/src/sdk/client.ts"], "estimated_ms": 170},
+      {"task_id": "08_integration_tests", "title": "Run auth integration tests", "depends_on": ["05_api_gateway", "06_rate_limiter"], "read_globs": ["src/**/*.py"], "write_globs": ["tests/test_auth_flow.py"], "estimated_ms": 240},
+      {"task_id": "09_fuzz_harness", "title": "Fuzz JWT parser", "depends_on": ["05_api_gateway"], "read_globs": ["src/auth/jwt.py"], "write_globs": ["tests/fuzz_jwt.py"], "estimated_ms": 140},
+      {"task_id": "10_release_attestation", "title": "Sign release manifest", "depends_on": ["07_openapi_client", "08_integration_tests", "09_fuzz_harness"], "read_globs": ["tests/*.py", "src/**/*.py"], "write_globs": ["dist/release_manifest.json"], "estimated_ms": 130}
+    ],
+    "symbol": [
+      {"task_id": "task_verify_fn", "title": "Edit verify_token function", "depends_on": [], "read_globs": ["src/auth/config.py"], "write_globs": ["src/auth/jwt.py::verify_token"], "estimated_ms": 180},
+      {"task_id": "task_rotate_fn", "title": "Edit rotate_keys function", "depends_on": [], "read_globs": ["src/auth/config.py"], "write_globs": ["src/auth/jwt.py::rotate_keys"], "estimated_ms": 160},
+      {"task_id": "task_whole_file", "title": "Format entire jwt.py module", "depends_on": [], "read_globs": [], "write_globs": ["src/auth/jwt.py"], "estimated_ms": 110}
+    ],
+    "cycle": [
+      {"task_id": "alpha", "title": "Parse OpenAPI spec", "depends_on": ["gamma"], "read_globs": [], "write_globs": ["out/a.json"], "estimated_ms": 100},
+      {"task_id": "beta", "title": "Generate router", "depends_on": ["alpha"], "read_globs": [], "write_globs": ["out/b.py"], "estimated_ms": 120},
+      {"task_id": "gamma", "title": "Validate response schemas", "depends_on": ["beta"], "read_globs": [], "write_globs": ["out/c.py"], "estimated_ms": 90}
+    ]
+  }
+  </script>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# SwarmWeaver v1.1.0
+
+> Deterministic Multi-Agent DAG Orchestrator, File-Scope Lease Conflict Guard & Crash-Safe Checkpoint Resume Engine (with MCP Server). Zero runtime dependencies on Python 3.11+.
+
+## Live Site & Key Pages
+- Home: https://codesphere-u.github.io/swarmweaver/
+- Interactive Studio (DAG Wave & Crash Recovery Simulator): https://codesphere-u.github.io/swarmweaver/studio.html
+- Reproducible Benchmark & Proof: https://codesphere-u.github.io/swarmweaver/proof.html
+- Engine Rules, Lease Locks, MCP & REST API Matrix: https://codesphere-u.github.io/swarmweaver/rules.html
+- Documentation (CLI, Python SDK, MCP, HTTP Portal): https://codesphere-u.github.io/swarmweaver/docs.html
+- Source Code & Releases: https://github.com/codesphere-u/swarmweaver
+
+## Core Capabilities
+- `DAGCompiler`: Kahn topological sorting, DFS cycle path reconstruction, `WRITE_WRITE` and `READ_WRITE` glob intersection, `::symbol` locks.
+- `FileScopeLeaseManager`: Thread-safe `SHARED_READ` / `EXCLUSIVE_WRITE` leases with sorted deadlock-free acquisition, TTL eviction, and SHA-256 tokens.
+- `CheckpointJournal`: Canonical JSON SHA-256 hash chain (`prev_hash -> entry_hash`) with `0.00752 ms/node` zero-token crash replay.
+- `TypedBlackboard`: Contract-checked handoffs (`input_contract`, `output_contract`) preventing silent type drift across agent waves.
+- Verified v1.1.0 Benchmark: 200-task DAG `P50 = 0.999 ms`, `0` parallel race conditions across 50 conflicting tasks, `70.0%` token savings on crash resume, `15/15` cycle/contract detection recall.

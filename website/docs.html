@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Documentation — SwarmWeaver CLI, Python SDK, MCP &amp; Checkpoints</title>
+  <meta name="description" content="Install SwarmWeaver with zero core dependencies, run CLI demos, use the Python SDK, connect MCP tools, and serve HTTP/SSE.">
+  <link rel="canonical" href="https://codesphere-u.github.io/swarmweaver/docs.html">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#fbbf24">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="SwarmWeaver v1.1.0 Docs — CLI, Python SDK, Leases &amp; MCP Server">
+  <meta property="og:description" content="Complete installation, Python SwarmOrchestrator examples, CheckpointJournal verification, and HTTP/SSE MCP guide.">
+  <meta property="og:url" content="https://codesphere-u.github.io/swarmweaver/docs.html">
+  <meta property="og:image" content="https://codesphere-u.github.io/swarmweaver/og-image.svg">
+
+  <link rel="stylesheet" href="styles.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "SwarmWeaver v1.1.0 Documentation",
+    "url": "https://codesphere-u.github.io/swarmweaver/docs.html",
+    "author": { "@id": "https://codesphere-u.github.io/swarmweaver/#org" },
+    "isPartOf": { "@id": "https://codesphere-u.github.io/swarmweaver/#website" }
+  }
+  </script>
+</head>
+<body data-analytics="plausible">
+  <div class="page-col page-col-docs">
+    <header class="site-header">
+      <a class="brand-link" href="index.html" aria-label="SwarmWeaver Home">
+        <svg class="brand-wordmark-svg" viewBox="0 0 196 36" width="196" height="36" role="img" aria-label="SwarmWeaver">
+          <path d="M16 4L28 11v14l-12 7-12-7V11L16 4Z" fill="#fbbf24" stroke="#1e1b18" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M11.5 16L16 12l4.5 4M11.5 16L16 23M20.5 16L16 23" stroke="#1e1b18" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="11.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="20.5" cy="16" r="2.4" fill="#06b6d4" stroke="#1e1b18" stroke-width="1.5"/>
+          <circle cx="16" cy="23.2" r="2.6" fill="#fffdf2" stroke="#1e1b18" stroke-width="1.5"/>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="none" stroke="#1e1b18" stroke-width="4.2" stroke-linejoin="round">SwarmWeaver</text>
+          <text x="36" y="25.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="21.5" font-weight="800" letter-spacing="-0.6" fill="#fbbf24">SwarmWeaver</text>
+        </svg>
+      </a>
+      <nav class="header-nav" aria-label="Primary navigation">
+        <a href="studio.html">Studio</a>
+        <a href="proof.html">Benchmark</a>
+        <a href="rules.html">Rules</a>
+        <a class="active" href="docs.html">Docs</a>
+        <a class="icon-link" href="https://github.com/codesphere-u/swarmweaver" aria-label="SwarmWeaver on GitHub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.11.79-.25.79-.56v-2c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.2 1.77 1.2 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.19-3.08-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a10.9 10.9 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.8 1.19 1.83 1.19 3.08 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        </a>
+        <a class="nav-pill" href="docs.html#install">Install</a>
+      </nav>
+    </header>
+
+    <main>
+      <div class="docs-mobile-nav" role="navigation" aria-label="Documentation topics">
+        <button class="docs-mobile-chip active" type="button" data-doc-target="install">Install &amp; CLI</button>
+        <button class="docs-mobile-chip" type="button" data-doc-target="sdk">Python SDK</button>
+        <button class="docs-mobile-chip" type="button" data-doc-target="mcp">MCP Server</button>
+        <button class="docs-mobile-chip" type="button" data-doc-target="http">HTTP Portal</button>
+      </div>
+
+      <div class="docs-layout">
+        <aside class="docs-sidebar" aria-label="Documentation sections">
+          <ul class="docs-rail">
+            <li class="doc-nav-item">
+              <button class="doc-nav-link active" type="button" data-doc-target="install">Getting Started</button>
+              <ul class="doc-subrail open" data-doc-subrail="install">
+                <li><a class="doc-sub-link active" href="#install-cli">Install &amp; Demo</a></li>
+                <li><a class="doc-sub-link" href="#cli-verbs">CLI Subcommands</a></li>
+              </ul>
+            </li>
+            <li class="doc-nav-item">
+              <button class="doc-nav-link" type="button" data-doc-target="sdk">Python SDK</button>
+              <ul class="doc-subrail" data-doc-subrail="sdk">
+                <li><a class="doc-sub-link" href="#orchestrator-api">SwarmOrchestrator</a></li>
+                <li><a class="doc-sub-link" href="#journal-api">CheckpointJournal</a></li>
+              </ul>
+            </li>
+            <li class="doc-nav-item">
+              <button class="doc-nav-link" type="button" data-doc-target="mcp">MCP Integration</button>
+              <ul class="doc-subrail" data-doc-subrail="mcp">
+                <li><a class="doc-sub-link" href="#mcp-tools">Tools &amp; Resources</a></li>
+                <li><a class="doc-sub-link" href="#mcp-prompts">Prompts</a></li>
+              </ul>
+            </li>
+            <li class="doc-nav-item">
+              <button class="doc-nav-link" type="button" data-doc-target="http">HTTP Portal &amp; CI</button>
+              <ul class="doc-subrail" data-doc-subrail="http">
+                <li><a class="doc-sub-link" href="#rest-endpoints">REST Endpoints</a></li>
+                <li><a class="doc-sub-link" href="#ci-checks">CI Quality Gate</a></li>
+              </ul>
+            </li>
+          </ul>
+        </aside>
+
+        <article class="doc-content">
+          <section class="doc-section" data-doc-section="install" id="install">
+            <h1>Getting Started with SwarmWeaver</h1>
+            <p>SwarmWeaver runs on Python 3.11+ with zero external runtime dependencies across DAG compilation, file-scope leases, SHA-256 checkpoints, and MCP tools.</p>
+
+            <h2 id="install-cli">Install &amp; run the 10-agent crash demo</h2>
+            <div class="handy-card">
+              <div class="handy-tabs-bar">
+                <div class="handy-tabs" role="tablist">
+                  <button class="handy-tab active" type="button" data-doc-os="mac">macOS / Linux</button>
+                  <button class="handy-tab" type="button" data-doc-os="win">Windows</button>
+                </div>
+                <span class="version-tag">v1.1.0</span>
+              </div>
+              <p class="eyebrow-label">Run locally</p>
+              <div class="doc-codeblock" style="margin-bottom: 0;">
+                <pre id="docOsCode"><span class="syn-cmd">git clone</span> https://github.com/codesphere-u/swarmweaver.git
+<span class="syn-cmd">cd</span> swarmweaver &amp;&amp; <span class="syn-cmd">pip install</span> <span class="syn-arg">-e .</span>
+<span class="syn-cmd">swarmweaver</span> demo &amp;&amp; <span class="syn-cmd">swarmweaver</span> benchmark</pre>
+                <button class="copy-icon-btn" type="button" id="docOsCopyBtn" aria-label="Copy install snippet">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <h2 id="cli-verbs">CLI Subcommands</h2>
+            <div class="doc-table-wrap">
+              <table class="doc-table">
+                <thead>
+                  <tr><th>Command</th><th>Purpose</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><code>swarmweaver plan [-f FILE] [--json]</code></td><td>Compile tasks into conflict-free parallel waves and print critical path stats.</td></tr>
+                  <tr><td><code>swarmweaver demo [--json]</code></td><td>Execute the 10-agent refactoring DAG with crash injection and instant SHA-256 resume.</td></tr>
+                  <tr><td><code>swarmweaver benchmark [--json]</code></td><td>Run the 4-part reproducible benchmark (200-task DAG, 50-task locks, 20 crash runs, 15 traps).</td></tr>
+                  <tr><td><code>swarmweaver verify-journal PATH [--json]</code></td><td>Audit every <code>prev_hash -&gt; entry_hash</code> SHA-256 link in a checkpoint JSONL file.</td></tr>
+                  <tr><td><code>swarmweaver mcp</code></td><td>Start the JSON-RPC 2.0 Stdio MCP server (<code>2024-11-05</code>).</td></tr>
+                  <tr><td><code>swarmweaver serve-http [--port 8000]</code></td><td>Launch the Streamable HTTP/SSE MCP server, REST API, Prometheus metrics, and Web UI.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="doc-pagination">
+              <button class="page-step-btn next" type="button" data-doc-jump="sdk">
+                <small>Next</small>
+                <strong>Python SDK -&gt;</strong>
+              </button>
+            </div>
+          </section>
+
+          <section class="doc-section" data-doc-section="sdk" id="sdk" hidden>
+            <h1>Python SDK</h1>
+            <p>Import <code>SwarmOrchestrator</code>, <code>TaskSpec</code>, and <code>CheckpointJournal</code> directly to schedule parallel Python or LLM agent tasks.</p>
+
+            <h2 id="orchestrator-api">SwarmOrchestrator &amp; TaskSpec</h2>
+            <div class="doc-codeblock">
+              <pre>from swarmweaver import SwarmOrchestrator, TaskSpec
+
+tasks = [
+    TaskSpec("audit", "Scan AST", read_globs=["src/**/*.py"], output_contract=["inv:dict"]),
+    TaskSpec("jwt", "Fix JWT", depends_on=["audit"], write_globs=["src/auth/jwt.py"], input_contract=["inv:dict"]),
+    TaskSpec("rbac", "Add RBAC", depends_on=["audit"], read_globs=["src/auth/jwt.py"], write_globs=["src/auth/jwt.py"]),
+]
+
+report = SwarmOrchestrator(tasks, journal_path=".swarmweaver/checkpoint.jsonl").run()
+print(report.total_waves, report.conflicts_auto_split, report.tokens_saved_by_replay)</pre>
+              <button class="copy-icon-btn" type="button" data-copy="from swarmweaver import SwarmOrchestrator, TaskSpec" aria-label="Copy Python import">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+
+            <h2 id="journal-api">CheckpointJournal Integrity</h2>
+            <p>Each completed task appends a canonical JSON record chaining <code>prev_hash -&gt; entry_hash</code>. Call <code>CheckpointJournal(path).verify_integrity()</code> before resuming untrusted disks.</p>
+            <div class="doc-pagination">
+              <button class="page-step-btn" type="button" data-doc-jump="install">
+                <small>Previous</small>
+                <strong>&lt;- Getting Started</strong>
+              </button>
+              <button class="page-step-btn next" type="button" data-doc-jump="mcp">
+                <small>Next</small>
+                <strong>MCP Integration -&gt;</strong>
+              </button>
+            </div>
+          </section>
+
+          <section class="doc-section" data-doc-section="mcp" id="mcp" hidden>
+            <h1>MCP Integration</h1>
+            <p>Connect Claude Desktop, Cursor, or any JSON-RPC 2.0 MCP host to compile waves and audit journals without leaving your editor.</p>
+
+            <h2 id="mcp-tools">Tools &amp; Resources</h2>
+            <ul>
+              <li><code>swarmweaver_plan_waves</code> — Compile candidate <code>TaskSpec</code> objects into parallel waves and critical-path metrics.</li>
+              <li><code>swarmweaver_check_file_conflicts</code> — Test a parallel task batch for write/write or read/write glob intersections.</li>
+              <li><code>swarmweaver_inspect_checkpoint</code> — Verify journal hash integrity and list resumable completed nodes.</li>
+              <li><code>swarmweaver_run_benchmark</code> — Execute the full 4-axis benchmark suite and return JSON telemetry.</li>
+              <li>Resources: <code>swarmweaver://workflow/demo-10-agent</code>, <code>swarmweaver://benchmark/summary</code>, <code>swarmweaver://dag/lease-conflict-rules</code>.</li>
+            </ul>
+
+            <h2 id="mcp-prompts">MCP Prompts</h2>
+            <p>SwarmWeaver exposes <code>plan-safe-swarm</code>, <code>resolve-file-lease-conflict</code>, and <code>recover-crashed-workflow</code> prompt templates via <code>prompts/list</code>.</p>
+            <div class="doc-pagination">
+              <button class="page-step-btn" type="button" data-doc-jump="sdk">
+                <small>Previous</small>
+                <strong>&lt;- Python SDK</strong>
+              </button>
+              <button class="page-step-btn next" type="button" data-doc-jump="http">
+                <small>Next</small>
+                <strong>HTTP Portal &amp; CI -&gt;</strong>
+              </button>
+            </div>
+          </section>
+
+          <section class="doc-section" data-doc-section="http" id="http" hidden>
+            <h1>HTTP Portal &amp; CI</h1>
+            <p>Serve Streamable MCP, REST endpoints, Prometheus metrics, and the built-in browser DAG Workbench from one zero-dependency HTTP server.</p>
+
+            <h2 id="rest-endpoints">REST &amp; Streamable MCP Endpoints</h2>
+            <ul>
+              <li><code>GET /health</code>, <code>GET /healthz</code>, <code>GET /readyz</code>, <code>GET /info</code></li>
+              <li><code>GET /metrics</code> (Prometheus exposition or <code>?format=json</code>)</li>
+              <li><code>POST /mcp</code> &amp; <code>GET /mcp</code> (Streamable HTTP JSON-RPC 2.0 and SSE)</li>
+              <li><code>POST /api/plan</code>, <code>POST /api/conflicts</code>, <code>GET|POST /api/demo</code>, <code>GET|POST /api/benchmark</code></li>
+            </ul>
+
+            <h2 id="ci-checks">CI Quality Gate</h2>
+            <div class="doc-codeblock">
+              <pre><span class="syn-cmd">ruff check</span> .
+<span class="syn-cmd">mypy</span> swarmweaver api scripts
+<span class="syn-cmd">pytest</span> <span class="syn-arg">-v --cov=swarmweaver --cov-fail-under=90</span>
+<span class="syn-cmd">python3</span> scripts/smoke_test.py</pre>
+              <button class="copy-icon-btn" type="button" data-copy="ruff check . && mypy swarmweaver api scripts && pytest -v --cov=swarmweaver --cov-fail-under=90" aria-label="Copy CI gate command">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </button>
+            </div>
+
+            <div class="doc-pagination">
+              <button class="page-step-btn" type="button" data-doc-jump="mcp">
+                <small>Previous</small>
+                <strong>&lt;- MCP Integration</strong>
+              </button>
+            </div>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <span>·</span>
+        <a href="studio.html">Studio</a>
+        <span>·</span>
+        <a href="proof.html">Benchmark</a>
+        <span>·</span>
+        <a href="rules.html">Rules</a>
+        <span>·</span>
+        <a href="https://github.com/codesphere-u/swarmweaver">GitHub</a>
+      </div>
+      <div>SwarmWeaver v1.1.0 · CodeSphere · MIT License · Privacy-first Plausible analytics</div>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

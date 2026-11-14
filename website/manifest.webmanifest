@@ -1,0 +1,16 @@
+{
+  "name": "SwarmWeaver — Deterministic Multi-Agent DAG Orchestrator",
+  "short_name": "SwarmWeaver",
+  "description": "Conflict-aware DAG compiler, file-scope lease manager, SHA-256 checkpoint resume engine, and MCP server.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#fffdf2",
+  "theme_color": "#fbbf24",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

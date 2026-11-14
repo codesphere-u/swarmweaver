@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#fffdf2"/>
+  <rect x="40" y="40" width="1120" height="550" rx="28" fill="#fbf8eb" stroke="#1e1b18" stroke-width="3"/>
+  <g transform="translate(96, 132)">
+    <path d="M130 10L242 74v128L130 266 18 202V74L130 10Z" fill="#fbbf24" stroke="#1e1b18" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M84 106L130 74L176 106M84 106L130 176M176 106L130 176" stroke="#1e1b18" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="84" cy="106" r="22" fill="#06b6d4" stroke="#1e1b18" stroke-width="6"/>
+    <circle cx="176" cy="106" r="22" fill="#06b6d4" stroke="#1e1b18" stroke-width="6"/>
+    <circle cx="130" cy="182" r="24" fill="#fffdf2" stroke="#1e1b18" stroke-width="6"/>
+    <path d="M119 182l8 8 15-16" stroke="#0891b2" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+  <text x="415" y="218" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="68" font-weight="800" fill="#1e1b18">SwarmWeaver</text>
+  <text x="415" y="274" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif" font-size="30" font-weight="600" fill="#4e463e">Deterministic Multi-Agent DAG Orchestrator</text>
+  <rect x="415" y="320" width="215" height="56" rx="12" fill="#fbbf24" stroke="#1e1b18" stroke-width="2.5"/>
+  <text x="438" y="357" font-family="ui-monospace, Menlo, monospace" font-size="24" font-weight="700" fill="#451a03">P50 0.999 ms</text>
+  <rect x="650" y="320" width="230" height="56" rx="12" fill="#cffafe" stroke="#1e1b18" stroke-width="2.5"/>
+  <text x="673" y="357" font-family="ui-monospace, Menlo, monospace" font-size="24" font-weight="700" fill="#083344">0 Race Conditions</text>
+  <rect x="900" y="320" width="210" height="56" rx="12" fill="#fffdf2" stroke="#1e1b18" stroke-width="2.5"/>
+  <text x="920" y="357" font-family="ui-monospace, Menlo, monospace" font-size="24" font-weight="700" fill="#1e1b18">70% Saved</text>
+  <text x="415" y="458" font-family="ui-monospace, Menlo, monospace" font-size="22" fill="#6b6258">v1.1.0 • File-Scope Leases • SHA-256 Checkpoints • MCP Server</text>
+</svg>

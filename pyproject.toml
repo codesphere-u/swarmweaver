@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "swarmweaver"
-version = "1.0.0"
+version = "1.1.0"
 description = "Deterministic Multi-Agent DAG Orchestrator, File-Scope Lease Conflict Guard & Crash-Safe Checkpoint Resume Engine (with MCP Server)."
 readme = "README.md"
 license = { text = "MIT" }
@@ -53,7 +53,8 @@ dev = [
 swarmweaver = "swarmweaver.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/codesphere-u/swarmweaver"
+Homepage = "https://codesphere-u.github.io/swarmweaver/"
+Documentation = "https://codesphere-u.github.io/swarmweaver/docs.html"
 Repository = "https://github.com/codesphere-u/swarmweaver"
 Issues = "https://github.com/codesphere-u/swarmweaver/issues"
 
